@@ -31,13 +31,12 @@ def create_glossary(directory, sectionTitle, fileMode):
                 continue
             start_char = file_name[0].upper()
             file_names = glossary_map.get(start_char, [])
-            file_path = os.path.join(root, file_name)           
+            file_path = os.path.join(root, file_name)
             last_modified_time = datetime.strptime(time.ctime(os.path.getmtime(file_path)), date_format)
             current_datetime = datetime.now()
             time_diff = current_datetime - last_modified_time
             file_name = "[[%s]] %s" % (file_name, time_diff.days)
             file_names.append(file_name)
-            print('%s modified at %s' % (file_path, time.ctime(os.path.getmtime(file_path))))
             glossary_map[start_char] = file_names
             if start_char not in glossary_count:
                 glossary_count[start_char] = 1
@@ -56,7 +55,7 @@ def create_glossary(directory, sectionTitle, fileMode):
             fileNameList = glossary_map.get(key)
             for fileName in fileNameList:
                 print('%s' % fileName, file=fhand)
-    print('Updated %s in %s at %s file' % (sectionTitle, booksFile, dt_string))
+    print('Updated %s in %s at %s' % (sectionTitle, booksFile, dt_string))
 
 
 def createFileDir(filesPath, sectionTitle, fileMode):
@@ -87,7 +86,7 @@ def createFileDir(filesPath, sectionTitle, fileMode):
             fileNameList = fileMap.get(key)
             for fileName in fileNameList:
                 print('[[%s]]\n' % fileName, file=fhand)
-    print('Updated %s in %s at %s file' % (sectionTitle, booksFile, dt_string))
+    print('Updated %s in %s at %s' % (sectionTitle, booksFile, dt_string))
 
 
 createFileDir(path, 'Books', "w")
