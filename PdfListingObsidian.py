@@ -22,6 +22,42 @@ def skip_dirs(root_dir):
     return False
 
 
+def create_time_diff_glossary(directory, sectionTitle, fileMode):
+    glossary_map = {}
+    glossary_count = dict()
+    for root, dirs, files in os.walk(directory):
+        for file_name in files:
+            if skip_dirs(root):
+                continue
+            file_path = os.path.join(root, file_name)
+            last_modified_time = datetime.strptime(time.ctime(os.path.getmtime(file_path)), date_format)
+            current_datetime = datetime.now()
+            time_diff = current_datetime - last_modified_time
+            time_diff_days = time_diff.days
+            file_names = glossary_map.get(time_diff_days, [])
+            file_name = "[[%s]]" % file_name
+            file_names.append(file_name)
+            glossary_map[time_diff_days] = file_names
+            if time_diff_days not in glossary_count:
+                glossary_count[time_diff_days] = 1
+            else:
+                glossary_count[time_diff_days] += 1
+
+    file_chars = list(glossary_map.keys())
+    file_chars.sort(reverse=True)
+
+    with open(booksFile, fileMode) as fhand:
+        print('# %s' % sectionTitle, file=fhand)
+        for key in file_chars:
+            print('## %s' % key, file=fhand)
+            # print('*%d*' % glossary_count[key], file=fhand)
+            print('<font size="4" color="turquoise">%s</font>' % glossary_count[key], file=fhand)
+            fileNameList = glossary_map.get(key)
+            for fileName in fileNameList:
+                print('%s' % fileName, file=fhand)
+    print('Updated %s in %s at %s' % (sectionTitle, booksFile, dt_string))
+
+
 def create_glossary(directory, sectionTitle, fileMode):
     glossary_map = {}
     glossary_count = dict()
@@ -61,8 +97,8 @@ def create_glossary(directory, sectionTitle, fileMode):
 def createFileDir(filesPath, sectionTitle, fileMode):
     fileMap = dict()
     fileCount = dict()
-    with os.scandir(
-            filesPath) as it:  # Doc -> https://docs.python.org/3.10/library/os.html?highlight=scandir#os.scandir
+    # Doc -> https://docs.python.org/3.10/library/os.html?highlight=scandir#os.scandir
+    with os.scandir(filesPath) as it:
         for entry in it:
             if entry.is_file() and not entry.name.startswith('.'):
                 fileName = entry.name
@@ -92,3 +128,4 @@ def createFileDir(filesPath, sectionTitle, fileMode):
 createFileDir(path, 'Books', "w")
 createFileDir(personalPath, 'Personal', "a")
 create_glossary(root_dir, 'Concepts', "a")
+create_time_diff_glossary(root_dir, 'Days Since', "a")
