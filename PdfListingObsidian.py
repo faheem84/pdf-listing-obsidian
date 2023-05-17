@@ -22,7 +22,7 @@ def skip_dirs(root_dir):
     return False
 
 
-def create_time_diff_glossary(directory, sectionTitle, fileMode):
+def create_time_diff_glossary(directory, sectionTitle, fileMode, reverse):
     glossary_map = {}
     glossary_count = dict()
     for root, dirs, files in os.walk(directory):
@@ -44,7 +44,7 @@ def create_time_diff_glossary(directory, sectionTitle, fileMode):
                 glossary_count[time_diff_days] += 1
 
     file_chars = list(glossary_map.keys())
-    file_chars.sort(reverse=True)
+    file_chars.sort(reverse=reverse)
 
     with open(booksFile, fileMode) as fhand:
         print('# %s' % sectionTitle, file=fhand)
@@ -128,4 +128,4 @@ def createFileDir(filesPath, sectionTitle, fileMode):
 createFileDir(path, 'Books', "w")
 createFileDir(personalPath, 'Personal', "a")
 create_glossary(root_dir, 'Concepts', "a")
-create_time_diff_glossary(root_dir, 'Days Since', "a")
+create_time_diff_glossary(root_dir, 'Days Since', "a", False)
